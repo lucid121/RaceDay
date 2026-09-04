@@ -25,9 +25,11 @@ jobs:
       - name: Verify Required Planning Files
         run: |
           echo "Checking required files inside /docs..."
+          shopt -s nullglob
           
           # Check ERD (Accepting common image/pdf formats)
-          if ls docs/*.jpg docs/*.png docs/*.pdf 1> /dev/null 2>&1; then
+          ERD_FILES=(docs/*.jpg docs/*.png docs/*.pdf docs/*.JPG docs/*.PNG docs/*.PDF)
+          if [ ${#ERD_FILES[@]} -gt 0 ]; then
             echo "✅ ERD planning document found."
           else
             echo "❌ Error: Missing ERD image or PDF in /docs!"
@@ -35,7 +37,8 @@ jobs:
           fi
           
           # Check SQL Script
-          if ls docs/*.sql 1> /dev/null 2>&1; then
+          SQL_FILES=(docs/*.sql docs/*.SQL)
+          if [ ${#SQL_FILES[@]} -gt 0 ]; then
             echo "✅ SQL Database Script found."
           else
             echo "❌ Error: Missing .sql script file in /docs!"
@@ -43,5 +46,3 @@ jobs:
           fi
           
           echo "🎉 All Part 1 documentation requirements successfully validated!"
-
-    echo "🎉 All Part 1 documentation requirements successfully validated!"
