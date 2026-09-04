@@ -1,34 +1,47 @@
-steps:
-- name: Checkout Repository
-  uses: actions/checkout@v4
+name: Validate Documentation
 
-- name: Check if docs folder exists
-  run: |
-    if [ -d "docs" ]; then
-      echo "✅ /docs folder found successfully."
-    else
-      echo "❌ Error: /docs folder is missing!"
-      exit 1
-    fi
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
 
-- name: Verify Required Planning Files
-  run: |
-    echo "Checking required files inside /docs..."
-    
-    # Check ERD (Accepting common image/pdf formats)
-    if ls docs/*.jpg docs/*.png docs/*.pdf 1> /dev/null 2>&1; then
-      echo "✅ ERD planning document found."
-    else
-      echo "❌ Error: Missing ERD image or PDF in /docs!"
-      exit 1
-    fi
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    # Check SQL Script
-    if ls docs/*.sql 1> /dev/null 2>&1; then
-      echo "✅ SQL Database Script found."
-    else
-      echo "❌ Error: Missing .sql script file in /docs!"
-      exit 1
-    fi
+      - name: Check if docs folder exists
+        run: |
+          if [ -d "docs" ]; then
+            echo "✅ /docs folder found successfully."
+          else
+            echo "❌ Error: /docs folder is missing!"
+            exit 1
+          fi
+
+      - name: Verify Required Planning Files
+        run: |
+          echo "Checking required files inside /docs..."
+          
+          # Check ERD (Accepting common image/pdf formats)
+          if ls docs/*.jpg docs/*.png docs/*.pdf 1> /dev/null 2>&1; then
+            echo "✅ ERD planning document found."
+          else
+            echo "❌ Error: Missing ERD image or PDF in /docs!"
+            exit 1
+          fi
+          
+          # Check SQL Script
+          if ls docs/*.sql 1> /dev/null 2>&1; then
+            echo "✅ SQL Database Script found."
+          else
+            echo "❌ Error: Missing .sql script file in /docs!"
+            exit 1
+          fi
+          
+          echo "🎉 All Part 1 documentation requirements successfully validated!"
 
     echo "🎉 All Part 1 documentation requirements successfully validated!"
