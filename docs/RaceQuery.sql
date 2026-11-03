@@ -1,4 +1,7 @@
+If DB_ID('RaceDayDB') Is Null Create Database RaceDayDB;
+GO
 Use RaceDayDB;
+GO
 
 Create Table Role (
     Roleid Int Identity(1,1) Primary Key,
@@ -23,7 +26,10 @@ Create Table Event (
     Eventname Varchar(150) Not Null,
     Eventdate Date Not Null,
     Location Varchar(200) Not Null,
+    Distance Decimal(5,2) Not Null,
+    Eventtype Varchar(50) Not Null,
     Description Varchar(1000) Null,
+    Constraint Ck_Event_Type Check (Eventtype In ('Run','Walk','Cycle')),
     Constraint Fk_Event_Organiser Foreign Key (Organiserid) References [User](Userid)
 );
 
@@ -41,7 +47,8 @@ Create Table Enrolment (
     Userid Int Not Null,
     Categoryid Int Not Null,
     Enrolmentdate Datetime Not Null Default Getdate(),
-    Status Varchar(50) Not Null Default 'Registered',
+    Status Varchar(50) Not Null Default 'Pending',
+    Constraint Ck_Enrolment_Status Check (Status In ('Pending','Confirmed','Completed')),
     Constraint Fk_Enrolment_User Foreign Key (Userid) References [User](Userid),
     Constraint Fk_Enrolment_Category Foreign Key (Categoryid) References Category(Categoryid) On Delete Cascade,
     Constraint Uq_User_Category Unique (Userid, Categoryid)
@@ -64,10 +71,10 @@ Insert Into [User] (Roleid, Name, Surname, Email, Passwordhash) Values
 (2, 'Sipho', 'Nkosi', 'sipho.runner@gmail.com', 'hashed_pwd_789'),
 (2, 'Jessica', 'Smith', 'jess.cycles@yahoo.com', 'hashed_pwd_012');
 
-Insert Into Event (Organiserid, Eventname, Eventdate, Location, Description) Values 
-(1, 'Cape Town Cycle Tour', '2027-03-14', 'Cape Town Stadium', 'The largest timed cycling event in the world.'),
-(2, 'Soweto Marathon', '2027-11-05', 'FNB Stadium, Johannesburg', 'The Peoples Race through the historic streets of Soweto.'),
-(1, 'Durban Sunrise 10km Walk', '2027-01-20', 'Moses Mabhida Stadium', 'A beautiful community walk along the Durban beachfront.');
+Insert Into Event (Organiserid, Eventname, Eventdate, Location, Distance, Eventtype, Description) Values 
+(1, 'Cape Town Cycle Tour', '2027-03-14', 'Cape Town Stadium', 109.00, 'Cycle', 'The largest timed cycling event in the world.'),
+(2, 'Soweto Marathon', '2026-10-25', 'FNB Stadium, Johannesburg', 42.20, 'Run', 'The Peoples Race through the historic streets of Soweto.'),
+(1, 'Durban Sunrise 10km Walk', '2026-09-20', 'Moses Mabhida Stadium', 10.00, 'Walk', 'A beautiful community walk along the Durban beachfront.');
 
 Insert Into Category (Eventid, Categoryname, Distance, Entryfee) Values 
 (1, 'Full Route', 109.00, 850.00),
@@ -84,7 +91,7 @@ Insert Into Category (Eventid, Categoryname, Distance, Entryfee) Values
 
 Insert Into Enrolment (Userid, Categoryid, Status) Values 
 (3, 4, 'Completed'),
-(4, 1, 'Registered'),
+(4, 1, 'Confirmed'),
 (4, 7, 'Completed');
 
 Insert Into Result (Enrolmentid, Finishtime, Position, Remarks) Values 

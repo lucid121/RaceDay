@@ -1,28 +1,32 @@
-using RaceDay.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using RaceDay.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Add services to the app.
 
-// 1. Register DbContext
+builder.Services.AddControllers();
+
+// Connect EF Core to SQL Server with the connection string in appsettings.json
 builder.Services.AddDbContext<RaceDayDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Register Session Services (REQUIRED before app.UseSession())
+// Session needs a place to store data on the server (memory is OK for this project)
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // log out after 30 minutes with no activity
+    options.Cookie.HttpOnly = true;                 // JavaScript cannot read this cookie
     options.Cookie.IsEssential = true;
 });
 
+// Learn more about Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
+// Set up the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,42 +35,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Session middleware MUST come before UseAuthorization and MapControllers
+// Session must come BEFORE authorization and MapControllers
 app.UseSession();
 
 app.UseAuthorization();
+
 app.MapControllers();
 
-// Database Seeding
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<RaceDayDbContext>();
-    db.Database.EnsureCreated();
-
-    if (!db.Roles.Any())
-    {
-        db.Roles.AddRange(
-            new Role { RoleId = 1, RoleName = "Organiser" },
-            new Role { RoleId = 2, RoleName = "Participant" }
-        );
-        db.SaveChanges();
-    }
-
-    if (!db.Users.Any())
-    {
-        db.Users.Add(new User
-        {
-            RoleId = 1,
-            Name = "Admin",
-            Surname = "Organiser",
-            Email = "organiser@raceday.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123!"),
-            DateCreated = DateTime.Now
-        });
-        db.SaveChanges();
-    }
-}
-
 app.Run();
-
-public partial class Program { }
