@@ -24,3 +24,5 @@ SQL Script: The database code to create tables and add sample data.
 CI/CD Validation
 
 We use GitHub Actions to check that our documentation folder and files are correct automatically.
+
+Part 3 added BannerImageUrl to Event and ProfilePictureUrl to User
