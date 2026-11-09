@@ -26,3 +26,16 @@ CI/CD Validation
 We use GitHub Actions to check that our documentation folder and files are correct automatically.
 
 Part 3 added BannerImageUrl to Event and ProfilePictureUrl to User
+
+# RaceDay - Full Event Management Platform
+
+## Docker Run Command
+To build and run the MVC web application in Docker:
+```bash
+docker build -t raceday-web -f RaceDay.Web/Dockerfile .
+docker run -p 8080:80 raceday-web
+```
+Open `http://localhost:8080` in your browser.
+
+## Database Schema Note
+Part 3 added `BannerImageUrl` to the `Event` table and `ProfilePictureUrl` to the `User` table to support Azure Blob Storage.
