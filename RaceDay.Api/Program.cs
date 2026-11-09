@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RaceDay.Api.Data;
+using RaceDay.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;                 // JavaScript cannot read the cookie
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 
 // Swagger shows every endpoint in the browser
 builder.Services.AddEndpointsApiExplorer();
