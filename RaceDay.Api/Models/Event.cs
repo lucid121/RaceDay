@@ -39,4 +39,7 @@ public class Event
 
     // Navigation: the categories inside this event (one event -> many categories)
     public List<Category> Categories { get; set; } = new();
+
+    [MaxLength(500)]
+    public string? BannerImageUrl { get; set; }
 }

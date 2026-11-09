@@ -35,7 +35,8 @@ public class EventsController : ControllerBase
         Location = e.Location,
         Distance = e.Distance,
         EventType = e.EventType,
-        Description = e.Description
+        Description = e.Description,
+        BannerImageUrl = e.BannerImageUrl
     };
 
     /// <summary>

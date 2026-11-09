@@ -37,4 +37,7 @@ public class User
 
     // Navigation: events this user entered (only Participants will have these)
     public List<Enrolment> Enrolments { get; set; } = new();
+
+    [MaxLength(500)]
+    public string? ProfilePictureUrl { get; set; }
 }
