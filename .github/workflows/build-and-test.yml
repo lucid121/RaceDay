@@ -1,4 +1,4 @@
-namname: Build and Test System
+name: Build and Test System
 
 on:
   push:
